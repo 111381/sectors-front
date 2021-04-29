@@ -4,26 +4,25 @@ Please enter your name and pick the Sectors you are currently involved in.
 <form [formGroup]="sectorsForm" (ngSubmit)="onSubmit()">
   <div>
     <label for="name">Name</label>
-    <input id="name" type="text" formControlName="name" required>
+    <input id="name" type="text" formControlName="name" [(ngModel)]="userName" required>
   </div>
   <br>
   <br>
   Sectors:
   <div>
-  <select multiple formControlName="selected" size="5" [compareWith]="compareFn" required>
-    <option [ngValue]="sector" *ngFor="let sector of sectors" class="level{{sector.level}}"
-            [disabled]="sector.childList.length > 0"
-            [class.disabled]="sector.childList.length > 0"
-            [value]="sector"
-            [selected]="sector.checked">
-      {{sector.title}}
-    </option>
-  </select>
+    <select multiple formControlName="selected" size="5" [compareWith]="compareFn" required>
+      <option [ngValue]="sector" *ngFor="let sector of sectors" class="level{{sector.level}}"
+              [disabled]="sector.childList.length > 0"
+              [class.disabled]="sector.childList.length > 0"
+              [value]="sector"
+              [selected]="sector.checked">
+        {{sector.title}}
+      </option>
+    </select>
   </div>
   <br>
-  <input type="checkbox" formControlName="agreed" required> Agree to terms
+  <input type="checkbox" formControlName="agreed" [(ngModel)]="agreed" required> Agree to terms
   <br>
   <br>
   <button>Save</button><br>
 </form>
-

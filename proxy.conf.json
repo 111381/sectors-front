@@ -1,5 +1,15 @@
 {
-  "/sectors": {
+  "/sectorpage": {
+    "target": "http://localhost:8080",
+    "secure": false,
+    "changeOrigin": false
+  },
+  "/saveresult": {
+    "target": "http://localhost:8080",
+    "secure": false,
+    "changeOrigin": false
+  },
+  "/updatename": {
     "target": "http://localhost:8080",
     "secure": false,
     "changeOrigin": false

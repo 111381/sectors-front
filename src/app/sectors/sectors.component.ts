@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 
-import { Sector } from '../sector';
+import { Sector } from '../model/sector';
 import { SectorsService } from "../sectors.service";
 import { MessageService } from "../message.service";
+import { SectorsPageData } from "../model/sectorspagedata";
 
 @Component({
   selector: 'app-sectors',
@@ -15,14 +16,16 @@ export class SectorsComponent implements OnInit {
   constructor(
     private sectorService: SectorsService,
     private formBuilder: FormBuilder,
-    private messageService: MessageService
+    private messageService: MessageService,
   ) { }
 
   ngOnInit(): void {
-    this.getSectors();
+    this.getComponentData();
   }
 
+  userName: string;
   sectors: Sector[] = [];
+  agreed: boolean;
   preselectedSectors: Sector[] = [];
   sectorsForm = this.formBuilder.group({
     name: '',
@@ -54,21 +57,35 @@ export class SectorsComponent implements OnInit {
       ok = false;
     }
     if (ok) {
-      // TODO: post
-      alert(JSON.stringify(this.sectorsForm.value))
+      this.saveSectorsByName();
     }
   }
 
-  getSectors(): void {
-    this.sectorService.getSectors()
-      .subscribe(sectors => this.flatSectors(sectors));
+  saveSectorsByName(): void {
+    const pageData: SectorsPageData = {
+      sectorList: this.sectorsForm.value.selected,
+      agreed: this.sectorsForm.value.agreed,
+      sysUserName: this.sectorsForm.value.name
+    }
+    this.sectorService.updateSectorsByName(pageData)
+      .subscribe(pageData => this.extractPageData(pageData));
   }
 
-  flatSectors(sectors: Sector[]): void {
+  getComponentData(): void {
+    this.sectorService.getSectorsPageData()
+      .subscribe(pageData => this.extractPageData(pageData));
+  }
+
+  private extractPageData(pageData: SectorsPageData): void {
+    this.flatSectors(pageData.sectorList);
+    this.userName = pageData.sysUserName;
+    this.agreed = pageData.agreed;
+  }
+
+  private flatSectors(sectors: Sector[]): void {
     for (const item of sectors) {
       this.sectors.push(item);
       if (item.checked) {
-        console.log(item.title);
         this.preselectedSectors.push(item);
       }
       if (item.childList.length > 0) {

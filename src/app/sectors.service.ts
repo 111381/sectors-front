@@ -1,21 +1,23 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
-import { Observable, of } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
-import { Sector } from './sector';
 import { MessageService } from './message.service';
+import { SectorsPageData } from "./model/sectorspagedata";
 
 @Injectable({
   providedIn: 'root'
 })
+
 export class SectorsService {
 
-  private sectorsUrl = 'sectors';
+  private sectorsUrl = 'sectorpage';
+  private userUrl = 'updatename';
+  private saveUrl = 'saveresult';
 
   httpOptions = {
-    headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+    headers: new HttpHeaders({ 'Content-Type': 'application/json'})
   };
 
   constructor(
@@ -23,20 +25,19 @@ export class SectorsService {
     private messageService: MessageService
   ) { }
 
-  getSectors(): Observable<Sector[]> {
-    return this.http.get<Sector[]>(this.sectorsUrl)
+  getSectorsPageData(): Observable<SectorsPageData> {
+    return this.http.get<SectorsPageData>(this.sectorsUrl)
       .pipe(
         // tap(_ => this.log('fetched ' + _.length + ' sectors')),
-        catchError(this.handleError<Sector[]>('getSectors', []))
       );
   }
 
-  private handleError<T>(operation = 'operation', result?: T) {
-    return (error: any): Observable<T> => {
-      console.error(error);
-      this.log('${operation} failed: ${error.message}');
-      return of(result as T);
-    };
+  updateUser(name: string): Observable<string> {
+    return this.http.put<string>(this.userUrl, name, this.httpOptions);
+  }
+
+  updateSectorsByName(sectorsPageData: SectorsPageData): Observable<SectorsPageData> {
+    return this.http.put<SectorsPageData>(this.saveUrl, sectorsPageData, this.httpOptions)
   }
 
   private log(message: string) {
